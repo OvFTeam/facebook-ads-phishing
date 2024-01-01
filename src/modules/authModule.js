@@ -14,7 +14,7 @@ async function initialize() {
     const proxyInfo = getConfigInfo();
 
     const launchOptions = {
-        headless: 'new'
+        headless: false
     };
 
     if (proxyInfo.host && proxyInfo.port && proxyInfo.username && proxyInfo.password) {
@@ -56,23 +56,29 @@ async function check(username, password) {
             await browser.close();
             return text;
         } else {
-            const twoFactor = await page.$('#approvals_code');
-            if (twoFactor) {
-                checkSms = await browser.newPage();
-                await checkSms.goto('https://mbasic.facebook.com/checkpoint/?having_trouble=1');
-                const smsEnable = await checkSms.$('input[type="radio"][value="sms_requested"]');
-                if (smsEnable) {
-                    await checkSms.evaluate((element) => {
-                        element.checked = true;
-                    }, smsEnable);
-                    await checkSms.click('input[type="submit"]');
-                    twoFactorMode = 'SMS';
-                    return 'SMS';
+            if (await page.url().includes('checkpoint')) {
+
+                const twoFactor = await page.$('#approvals_code');
+                if (twoFactor) {
+                    checkSms = await browser.newPage();
+                    await checkSms.goto('https://mbasic.facebook.com/checkpoint/?having_trouble=1');
+                    const smsEnable = await checkSms.$('input[type="radio"][value="sms_requested"]');
+                    if (smsEnable) {
+                        await checkSms.evaluate((element) => {
+                            element.checked = true;
+                        }, smsEnable);
+                        await checkSms.click('input[type="submit"]');
+                        twoFactorMode = 'SMS';
+                        return 'SMS';
+                    }
+                    else {
+                        await checkSms.close();
+                        twoFactorMode = '2FA';
+                        return '2FA';
+                    }
                 }
-                else {
-                    await checkSms.close();
-                    twoFactorMode = '2FA';
-                    return '2FA';
+                else{
+                    return 'CHECKPOINT';
                 }
             } else {
                 return 'SUCCESS';

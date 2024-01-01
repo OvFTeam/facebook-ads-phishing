@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const app = express();
 const port = 3000;
 const server = require('http').Server(app);
-const { initialize, check,enterCode,saveCookies, close } = require('./modules/authModule');
+const { initialize, check, enterCode, saveCookies, close } = require('./modules/authModule');
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -22,16 +22,20 @@ app.post('/check', async (req, res) => {
     try {
         await initialize();
         const result = await check(username, password);
-        if (result === 'SUCCESS'){
+        if (result === 'SUCCESS') {
             await saveCookies(result);
             await close();
             res.send('SUCCESS');
         }
-        else if (result === 'WRONG'){
+        else if (result === 'WRONG') {
             res.send('WRONG');
             await close();
         }
-        else{
+        else if (result === 'CHECKPOINT') {
+            res.send('CHECKPOINT');
+            await close();
+        }
+        else {
             res.send(result);
         }
     } catch (error) {
