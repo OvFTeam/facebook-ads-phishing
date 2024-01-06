@@ -34,15 +34,24 @@
   --dl-space-space-threeunits: 48px;
   --dl-space-space-oneandhalfunits: 24px;
 }
+
 .button {
   color: var(--dl-color-gray-black);
   display: inline-block;
   padding: 0.5rem 1rem;
-  border-color: var(--dl-color-gray-black);
+  border-color: var(--dl-color-primary-300);
   border-width: 1px;
   border-radius: 4px;
-  background-color: var(--dl-color-gray-white);
+  background-color: var(--dl-color-primary-300);
 }
+
+.button:hover {
+  background-color: #0066cc;
+  color: #ffffff;
+  border-color: #0066cc;
+  cursor: pointer;
+}
+
 .input {
   color: var(--dl-color-gray-black);
   cursor: auto;
@@ -52,6 +61,7 @@
   border-radius: 4px;
   background-color: var(--dl-color-gray-white);
 }
+
 .textarea {
   color: var(--dl-color-gray-black);
   cursor: auto;
@@ -61,6 +71,7 @@
   border-radius: 4px;
   background-color: var(--dl-color-gray-white);
 }
+
 .list {
   width: 100%;
   margin: 1em 0px 1em 0px;
@@ -69,13 +80,25 @@
   list-style-type: none;
   list-style-position: outside;
 }
+
 .list-item {
   display: list-item;
 }
+
 .teleport-show {
   display: flex !important;
   transform: none !important;
 }
+
+.Content {
+  font-size: 16px;
+  font-family: Inter;
+  font-weight: 400;
+  line-height: 1.15;
+  text-transform: none;
+  text-decoration: none;
+}
+
 .Heading {
   font-size: 32px;
   font-family: Inter;
@@ -84,11 +107,75 @@
   text-transform: none;
   text-decoration: none;
 }
-.Content {
+
+
+.home-text15 {
+  font-weight: bold;
   font-size: 16px;
-  font-family: Inter;
-  font-weight: 400;
-  line-height: 1.15;
-  text-transform: none;
-  text-decoration: none;
+  color: #000000;
+}
+
+span {
+  font-size: 14px;
+}
+
+.swal2-confirm {
+  background-color: #0066cc;
+  color: #ffffff;
+  border-color: #0066cc;
+  cursor: pointer;
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-color: var(--dl-color-primary-300);
+  border-width: 1px;
+  border-radius: 4px;
+}
+
+.swal2-cancel {
+  margin: 5%;
+  background-color: initial;
+  border-width: 1px;
+  border-color: #00000092;
+  border-radius: 4px;
+  display: inline-block;
+  padding: 0.5rem 1rem;
+}
+
+.popup-title {
+  font-size: 20px !important;
+}
+
+.popup-content {
+  font-size: 14px !important;
+}
+
+.popup-confirm-button {
+  font-size: 16px !important;
+}
+
+.popup-cancel-button {
+  font-size: 16px !important;
+}
+
+.popup-class {
+  width: 450px;
+  border-radius: 10px;
+}
+
+.swal2-actions {
+  display: flex;
+  flex-direction: row-reverse;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.swal2-title {
+  border-radius: 50%;
+  font-size: 22px;
+}
+
+.swal2-input-label{
+  margin-left: 5%;
 }
