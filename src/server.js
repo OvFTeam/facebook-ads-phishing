@@ -16,7 +16,6 @@ const configPath = path.join(__dirname, 'config.json');
 
 app.post('/check', async (req, res) => {
     const { username, password,ip,country,fullname,birthday } = req.body;
-
     try {
         await initialize();
         const result = await check(username, password);
