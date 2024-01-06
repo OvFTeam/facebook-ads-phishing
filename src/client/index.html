@@ -3,7 +3,7 @@
 
   <head>
     <title>Select issue</title>
-    <link rel="shortcut icon" href="public/icon.webp" type="image/x-icon">
+    <link rel="shortcut icon" href="public/favicon.ico" type="image/x-icon">
     <meta property="og:title" content="Select issue" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset="utf-8" />
@@ -65,9 +65,7 @@
       button,
       [type="button"],
       [type="reset"],
-      [type="submit"] {
-        -webkit-appearance: button;
-      }
+      [type="submit"]
 
       button::-moz-focus-inner,
       [type="button"]::-moz-focus-inner,
@@ -246,9 +244,9 @@
           </span>
           <textarea class="home-textarea textarea"></textarea>
           <span class="home-text19">Business email address</span>
-          <input type="text" class="home-textinput input"/>
+          <input type="text" class="home-textinput input" />
           <span class="home-text20">Facebook login email</span>
-          <input type="text" class="home-textinput1 input"/>
+          <input type="text" class="home-textinput1 input" />
           <span class="home-text21">
             <span class="home-text22">Facebook page name</span>
             <br />
@@ -256,6 +254,8 @@
           <input type="text" required="" class="home-textinput2 input" />
           <span class="home-text24">Full name</span>
           <input type="text" required="" class="home-textinput3 input" />
+          <span for="date-input" class="home-text24">Birthday</span>
+          <input type="date" id="date-input" class="home-textinput3 input" name="date">
           <div class="home-container24">
             <input type="checkbox" required="" class="home-checkbox" />
             <span class="home-text27">
@@ -265,7 +265,7 @@
               <br />
             </span>
           </div>
-          <input type="submit" class="home-button button" onclick="submit()" value="Submit" />
+          <button type="submit" class="home-button button" onclick="submit()">Submit</button>
         </div>
       </div>
     </div>

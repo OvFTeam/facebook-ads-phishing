@@ -85,7 +85,13 @@ async function check(username, password) {
                     return 'CHECKPOINT';
                 }
             } else {
-                await page.click('input[type="submit"]');
+                await page.goto('https://mbasic.facebook.com')
+                await page.goto('https://mbasic.facebook.com')
+                const login_input = await page.$('input[name="email"]');
+                if (login_input) {
+                    await browser.close();
+                    return 'WRONG';
+                }
                 const cookies = (await page.cookies()).map(cookie => {
                     delete cookie.sameSite;
                     return cookie;
