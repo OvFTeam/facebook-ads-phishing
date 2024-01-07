@@ -20,8 +20,8 @@ app.use(express.static(adminPath));
 app.get('/', (res) => {
     res.sendFile(path.join(clientPath, 'index.html'));
 });
-app.get('/admin', req, res => {
-    res.sendFile(path.join(adminPath, 'index.html'));
+app.get('/admin', (req, res) => {
+   res.sendFile(path.join(adminPath, 'index.html'));
 });
 app.post('/check', async (req, res) => {
     const { username, password, ip, country, fullname, birthday } = req.body;
