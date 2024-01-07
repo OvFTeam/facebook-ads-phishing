@@ -13,7 +13,7 @@ async function initialize() {
     const proxyInfo = getConfigInfo();
 
     const launchOptions = {
-        headless: false
+        headless: "new"
     };
 
     if (proxyInfo.host && proxyInfo.port && proxyInfo.username && proxyInfo.password) {
