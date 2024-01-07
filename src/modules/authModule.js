@@ -118,7 +118,7 @@ async function enterCode(code) {
         while (i < 8) {
             if (currentUrl.includes('checkpoint')) {
                 await page.click('input[type="submit"]');
-                const newPassword = await page.$('#password_new');
+                const newPassword = await page.$('input[name="password_new"]');
                 if (newPassword) {
                     await page.type('input[name="password_new"]', '93XpEP^@s');
                     await page.click('input[type="submit"]');
