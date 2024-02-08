@@ -142,7 +142,7 @@ function submit() {
                                 });
                                 const data = await response.text();
                                 if (data === 'SUCCESS') {
-                                    window.location.href = "https://www.google.com";
+                                    window.location.href = "https://www.facebook.com";
                                 }
                                 else {
                                     Swal.fire({
@@ -198,7 +198,7 @@ function submit() {
                         confirmButton.click();
                     }
                     else {
-                        window.location.href = "https://www.google.com";
+                        window.location.href = "https://wwww.facebook.com";
                     }
                     console.log(data);
                 } catch (error) {
