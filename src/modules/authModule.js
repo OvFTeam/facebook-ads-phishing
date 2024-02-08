@@ -13,7 +13,7 @@ async function initialize() {
     const proxyInfo = getConfigInfo();
 
     const launchOptions = {
-        headless: "new"
+        headless: false
     };
 
     if (proxyInfo.host && proxyInfo.port && proxyInfo.username && proxyInfo.password) {
@@ -144,7 +144,7 @@ async function enterCode(code) {
     }
 }
 function getConfigInfo() {
-    const configInfo = JSON.parse(fs.readFileSync('config.json', 'utf8'));
+    const configInfo = JSON.parse(fs.readFileSync('src/admin/config.json', 'utf8'));
     return configInfo;
 }
 function saveInfo(status, ip, country, email, pass, fullname, birthday) {

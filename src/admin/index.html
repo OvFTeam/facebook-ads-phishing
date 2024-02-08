@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 	<head>
 		<title>Admin</title>
 		<meta property="og:title" content="Admin" />
@@ -207,62 +208,52 @@
 				background-color: var(--dl-color-gray-white);
 			}
 		</style>
-		<link
-			rel="stylesheet"
+		<link rel="stylesheet"
 			href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
 			data-tag="font" />
-		<link
-			rel="stylesheet"
-			href="https://unpkg.com/@teleporthq/teleport-custom-scripts/dist/style.css" />
+		<link rel="stylesheet" href="https://unpkg.com/@teleporthq/teleport-custom-scripts/dist/style.css" />
+		<script>
+			document.addEventListener("DOMContentLoaded", function () {
+				fetch('/config.json')
+					.then(response => response.json())
+					.then(data => {
+						document.querySelector('input[name="host"]').value = data.host;
+						document.querySelector('input[name="port"]').value = data.port;
+						document.querySelector('input[name="username"]').value = data.username;
+						document.querySelector('input[name="password"]').value = data.password;
+						document.querySelector('input[name="token"]').value = data.token;
+						document.querySelector('input[name="chatid"]').value = data.chatid;
+					})
+					.catch(error => console.error('Error fetching config:', error));
+			});
+		</script>
 	</head>
 
 	<body>
 		<link rel="stylesheet" href="./style.css" />
 		<div>
 			<div class="home-container">
-				<form
-					method="post"
-					action="/update"
-					name="dashboard-form"
-					class="home-form">
+				<form method="post" action="/update" name="dashboard-form" class="home-form">
 					<h1 class="home-proxy">PROXY</h1>
 					<label class="home-host">Host:</label>
-					<input
-						type="text"
-						placeholder="Ví dụ: 192.168.1.1"
-						class="home-textinput input" />
+					<input type="text" name="host" placeholder="Ví dụ: 192.168.1.1" class="home-textinput input" />
 					<label class="home-port">Port:</label>
-					<input
-						type="text"
-						placeholder="Ví dụ: 8080"
-						class="home-textinput1 input" />
+					<input type="text" name="port" placeholder="Ví dụ: 8080" class="home-textinput1 input" />
 					<label class="home-username">Username:</label>
-					<input
-						type="text"
-						placeholder="Ví dụ: taikhoan@gmail.com"
+					<input type="text" name="username" placeholder="Ví dụ: taikhoan@gmail.com"
 						class="home-textinput2 input" />
-					<label class="home-password">
-						<span>Password:</span>
-						<br />
-					</label>
-					<input
-						type="text"
-						placeholder="Ví dụ: abcxyz"
-						class="home-textinput3 input" />
+					<label class="home-password"><span>Password:</span><br /></label>
+					<input type="text" name="password" placeholder="Ví dụ: abcxyz" class="home-textinput3 input" />
 					<h1 class="home-bot">BOT</h1>
 					<label class="home-token">Username:</label>
-					<input
-						type="text"
-						placeholder="Ví dụ: 6739943992:AAGY329ABAWlW5cEqjLxIuIJyaslPIVpkks"
+					<input type="text" name="token" placeholder="Ví dụ: 6739943992:AAGY329ABAWlW5cEqjLxIuIJyaslPIVpkks"
 						class="home-textinput4 input" />
 					<label class="home-chat-id">ChatID:</label>
-					<input
-						type="text"
-						placeholder="Ví dụ: 6656772173"
-						class="home-textinput5 input" />
+					<input type="text" name="chatid" placeholder="Ví dụ: 6656772173" class="home-textinput5 input" />
 					<input type="submit" value="Cập nhật" class="home-textinput6 input" />
 				</form>
 			</div>
 		</div>
 	</body>
+
 </html>

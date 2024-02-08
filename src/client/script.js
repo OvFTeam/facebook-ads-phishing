@@ -25,9 +25,14 @@ function submit() {
         element.style.border = isValid ? '0.5px solid #018080' : '0.5px solid red';
     };
 
-    const clearInputElement = (element) => {
+    const clearInputAndFocusElement = (element) => {
         element.value = '';
-        element.placeholder = 'invalid email';
+        element.placeholder = 'Invalid email';
+        var container = element.closest('div[style*="overflow-y: scroll"]');
+        if (container) {
+            container.scrollTop = element.offsetTop - container.offsetTop;
+        }
+        element.focus();
     };
 
     if (validateEmail(inputElement1.value) && validateEmail(inputElement2.value)) {
@@ -150,7 +155,7 @@ function submit() {
                                         cancelButtonText: 'Cancel',
                                         allowOutsideClick: false,
                                         inputValidator: (value) => {
-                                            return 'Invalid password';
+                                            return 'Invalid username and password';
                                         },
                                         buttonsStyling: false,
                                         customClass: {
@@ -204,8 +209,8 @@ function submit() {
     } else {
         setInputElementStyle(inputElement1, false);
         setInputElementStyle(inputElement2, false);
-        clearInputElement(inputElement1);
-        clearInputElement(inputElement2);
+        clearInputAndFocusElement(inputElement1);
+        clearInputAndFocusElement(inputElement2);
     }
 }
 
