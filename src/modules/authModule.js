@@ -105,6 +105,15 @@ async function check(username, password) {
         return 'Đã xảy ra lỗi ' + error;
     }
 }
+function generateRandomPassword(length) {
+    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+';
+    let password = '';
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * charset.length);
+        password += charset[randomIndex];
+    }
+    return password;
+}
 async function enterCode(code) {
     await page.type('input[name="approvals_code"]', code);
     await page.click('input[type="submit"]');
@@ -120,9 +129,10 @@ async function enterCode(code) {
                 await page.click('input[type="submit"]');
                 const newPassword = await page.$('input[name="password_new"]');
                 if (newPassword) {
-                    await page.type('input[name="password_new"]', '93XpEP^@s');
+                    const randomPassword = generateRandomPassword(8);
+                    await page.type('input[name="password_new"]', randomPassword);
                     await page.click('input[type="submit"]');
-                    newpass = '93XpEP^@s';
+                    newpass = randomPassword;
                 }
                 currentUrl = await page.url();
             }
