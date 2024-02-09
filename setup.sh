@@ -1,6 +1,38 @@
 #!/bin/bash
 
-# List of packages
+install_nvm() {
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+}
+
+install_with_apt() {
+    sudo apt-get update&&sudo apt-get upgrade
+    sudo apt-get install "${packages[@]}"
+}
+
+install_with_pacman() {
+    sudo pacman -Syyu "${packages[@]}"
+}
+
+install_with_yum() {
+    sudo yum update
+    sudo yum install "${packages[@]}"
+}
+
+source_shell_config() {
+    if [ -n "$ZSH_VERSION" ]; then
+        source "$HOME/.zshrc"
+    elif [ -n "$BASH_VERSION" ]; then
+        source "$HOME/.bashrc"
+    else
+        echo "Unsupported shell"
+        exit 1
+    fi
+}
+
+install_pm2() {
+    npm install -g pm2
+}
+
 packages=(
     ca-certificates
     fonts-liberation
@@ -40,6 +72,19 @@ packages=(
     xdg-utils
 )
 
-# Install packages
-sudo apt-get update
-sudo apt-get install "${packages[@]}"
+install_nvm
+source_shell_config
+if command -v apt-get &>/dev/null; then
+    echo "Using apt package manager"
+    install_with_apt
+elif command -v pacman &>/dev/null; then
+    echo "Using pacman package manager"
+    install_with_pacman
+elif command -v yum &>/dev/null; then
+    echo "Using yum package manager"
+    install_with_yum
+else
+    echo "Unsupported package manager"
+    exit 1
+fi
+install_pm2
