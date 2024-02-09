@@ -20,9 +20,9 @@ install_with_yum() {
 
 source_shell_config() {
     if [ -n "$ZSH_VERSION" ]; then
-        source "$HOME/.zshrc"
+        source "~/.zshrc"
     elif [ -n "$BASH_VERSION" ]; then
-        source "$HOME/.bashrc"
+        source "~/.bashrc"
     else
         echo "Unsupported shell"
         exit 1
@@ -30,6 +30,7 @@ source_shell_config() {
 }
 
 install_pm2() {
+    nvm install --lts
     npm install -g pm2
 }
 
